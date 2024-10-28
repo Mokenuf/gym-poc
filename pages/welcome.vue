@@ -1,7 +1,7 @@
 <template>
   <UContainer>
-    <h1>¡Bienvenido, {{ user.name }}!</h1>
-    <p>Tu email es: {{ user.email }}</p>
+    <h1>¡Bienvenido, {{ user?.name }}!</h1>
+    <p>Tu email es: {{ user?.email }}</p>
     <UButton label="Desloguear" @click="handleLogout" />
   </UContainer>
 </template>
@@ -10,13 +10,16 @@
 definePageMeta({
   middleware: 'auth'
 })
-const userStore = useUserStore()
-const { logout } = useAuth()
-const user = userStore.user
+const authStore = useAuthStore()
+const user = authStore.loggedUser
 const router = useRouter()
 
 const handleLogout = async () => {
-  await logout()
-  router.push('/')
+  const response = await authStore.logout()
+  if (response) {
+    router.push('/')
+  } else {
+    alert('Error al desloguear')
+  }
 }
 </script>
